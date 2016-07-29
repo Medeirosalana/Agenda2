@@ -34,6 +34,11 @@ public class ContatoController {
         }
         
     }
+    public boolean remover(int id){
+        Contato contato = new Contato();
+        contato.setId(id);
+        return dao.delete(contato);
+    }
 
    
     

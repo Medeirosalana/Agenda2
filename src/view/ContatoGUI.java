@@ -8,6 +8,8 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -102,6 +104,52 @@ public class ContatoGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
             FormContatoUI form = new FormContatoUI(null, model);
             form.open();
+            }
+        });
+        btDelete.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               int i[] = tbContatos.getSelectedRows();
+                if(i.length == 0){
+                    JOptionPane.showMessageDialog(null, "Selecione um contato!");
+                }else if(i.length > 1){
+                    JOptionPane.showMessageDialog(null, "Selecione apenas um contato!");
+                }else{
+                    Contato contato = new Contato();
+                    contato.setId ((int) tbContatos.getValueAt(i[0], 0));
+                    contato.setNome((String) tbContatos.getValueAt(i[0], 1));
+                    contato.setFone((String) tbContatos.getValueAt(i[0], 2));
+                    int resposta = JOptionPane.showConfirmDialog(null, "Deseja Excluir "+ contato.getNome()+ "?");
+                    if(resposta == 0){
+                        if(new ContatoController().remover(contato.getId())){
+                            JOptionPane.showMessageDialog(null, contato.getNome() + "Excluido com sucesso!");
+                            loadTable();
+                        }
+                    }else{
+                    JOptionPane.showMessageDialog(null, "Falha ao tentar excluir");
+                    }
+                }
+            }
+        });
+        tfPesquisar.addKeyListener(new KeyListener() {
+
+            @Override
+            public void keyTyped(KeyEvent e) {
+                
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                model.setRowCount(0);
+                for(Contato contato : new ContatoController().listar(tfPesquisar.getText())){
+                    model.addRow(new Object[]{contato.getId(), contato.getNome(), foneHelper.formatar(contato.getFone())});
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                
             }
         });
     }
